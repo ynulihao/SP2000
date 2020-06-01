@@ -3,7 +3,6 @@
 This package programatically download catalogue of the Chinese known species of animals, plants, fungi and micro-organisms. There are __122280__ species & infraspecific taxa in [2020 Annual Checklist of Catalogue of Life China](http://sp2000.org.cn/2019), including __110231__ species and __12049__ infraspecific taxa.This package also supports access to catalogue of life global <http://catalogueoflife.org> and catalogue of life Taiwan <http://taibnet.sinica.edu.tw/home_eng.php?>.
 
 
-
 ## Overview 
 
 
@@ -114,6 +113,140 @@ sp2000.get_redlist_china(query = "Anguilla", option = "Scientific Names")
 ```
 ```python
 todo
+```
+## Tips
+
+You can use pprint to “pretty-print” arbitrary Python data structures
+```python
+pprint(sp2000.search_checklist('b8c6a086-3d28-4876-8e8a-ca96e667768d'))
+```
+```python
+{'b8c6a086-3d28-4876-8e8a-ca96e667768d': {'CommonNames': ['草豹',
+                                                          '荷叶豹',
+                                                          'Snow Leopard',
+                                                          '艾叶豹',
+                                                          '打马热(藏族)'],
+                                          'Distribution': 'Shanxi, Gansu, Nei '
+                                                          'Mongol, Yunnan, '
+                                                          'Qinghai, Xizang, '
+                                                          'Sichuan, '
+                                                          'Xinjiang(四川省,新疆维吾尔自治区,内蒙古自治区,西藏自治区,甘肃省,云南省,山西省,青海省)',
+                                          'Refs': [{'[1]': 'WANG Sung WANG '
+                                                           'JiaJun and LUO '
+                                                           'YiNin, 1994. '
+                                                           'MAMMALIAN '
+                                                           'NAMES(LATIN, '
+                                                           'CHINESE AND '
+                                                           'ENGLISH). '
+                                                           'Beijing:Science '
+                                                           'Press. '},
+                                                   {'[2]': 'WANG Sung, 1998. '
+                                                           'CHINA RED DATA '
+                                                           'BOOK OF ENDANGERED '
+                                                           'ANIMALES - '
+                                                           'MAMMALIA. Beijing, '
+                                                           'Hong Kong, New '
+                                                           'York:Science '
+                                                           'Press. '},
+                                                   {'[3]': 'Don E. Wilson and '
+                                                           'DeeAnn M. Reeder '
+                                                           '(eds.), 2005. '
+                                                           'Mammal Species of '
+                                                           'the World. Mammal '
+                                                           'Species of the '
+                                                           'World, 3rd '
+                                                           'edition, '
+                                                           'Baltimore:The '
+                                                           'Johns Hopkins '
+                                                           'University '
+                                                           'Press. '}],
+                                          'SpecialistInfo': [{'Address': '1 '
+                                                                         'Beichen '
+                                                                         'West '
+                                                                         'Road, '
+                                                                         'Chaoyang '
+                                                                         'District, '
+                                                                         'Beijing '
+                                                                         '100101, '
+                                                                         'P.R.China(北京市朝阳区北辰西路1号院5号 '
+                                                                         '中国科学院动物研究所)',
+                                                              'E-Mail': 'yangqs@ioz.ac.cn',
+                                                              'Institution': 'Institute '
+                                                                             'of '
+                                                                             'Zoology, '
+                                                                             'Chinese '
+                                                                             'Academy '
+                                                                             'of '
+                                                                             'Sciences(中国科学院动物研究所)',
+                                                              'name': 'Yang '
+                                                                      'Qi-Sen(杨奇森)'}],
+                                          'Synonyms': [{'refs': [{'[1]': 'Don '
+                                                                         'E. '
+                                                                         'Wilson '
+                                                                         'and '
+                                                                         'DeeAnn '
+                                                                         'M. '
+                                                                         'Reeder '
+                                                                         '(eds.), '
+                                                                         '2005. '
+                                                                         'Mammal '
+                                                                         'Species '
+                                                                         'of '
+                                                                         'the '
+                                                                         'World. '
+                                                                         'Mammal '
+                                                                         'Species '
+                                                                         'of '
+                                                                         'the '
+                                                                         'World, '
+                                                                         '3rd '
+                                                                         'edition, '
+                                                                         'Baltimore:The '
+                                                                         'Johns '
+                                                                         'Hopkins '
+                                                                         'University '
+                                                                         'Press. '}],
+                                                        'synonym': 'Panthera '
+                                                                   'uncia'},
+                                                       {'refs': [{'[1]': 'Don '
+                                                                         'E. '
+                                                                         'Wilson '
+                                                                         'and '
+                                                                         'DeeAnn '
+                                                                         'M. '
+                                                                         'Reeder '
+                                                                         '(eds.), '
+                                                                         '2005. '
+                                                                         'Mammal '
+                                                                         'Species '
+                                                                         'of '
+                                                                         'the '
+                                                                         'World. '
+                                                                         'Mammal '
+                                                                         'Species '
+                                                                         'of '
+                                                                         'the '
+                                                                         'World, '
+                                                                         '3rd '
+                                                                         'edition, '
+                                                                         'Baltimore:The '
+                                                                         'Johns '
+                                                                         'Hopkins '
+                                                                         'University '
+                                                                         'Press. '}],
+                                                        'synonym': 'Felis '
+                                                                   'uncia'}],
+                                          'chineseName': '雪豹',
+                                          'scientificName': 'Uncia '
+                                                            'uncia(Schreber,1775)',
+                                          'taxonTree': {'class': 'Mammalia',
+                                                        'family': 'Felidae',
+                                                        'genus': 'Uncia',
+                                                        'infraspecies': '',
+                                                        'kingdom': 'Animalia',
+                                                        'order': 'CARNIVORA',
+                                                        'phylum': 'Chordata',
+                                                        'species': 'uncia'}}}
 ```
 
 ## Contribution
