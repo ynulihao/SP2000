@@ -23,7 +23,7 @@ pip install SP2000
 
 Import  the **SP2000** package
 ```python
-from SP2000 import sp2000
+from SP2000.sp2000 import sp2000
 ```
 ###### Search family IDs via family name, supports Latin and Chinese names
 ```python
@@ -110,7 +110,7 @@ sp2000.get_col_taiwan(query="Anguilla",tree="name",option = "contain")
 ###### Query Redlist of Chinese Biodiversity
 ```python
 # todo
-sp2000.get_redlistchina(query = "Anguilla", option = "Scientific Names")
+sp2000.get_redlist_china(query = "Anguilla", option = "Scientific Names")
 ```
 ```python
 todo
