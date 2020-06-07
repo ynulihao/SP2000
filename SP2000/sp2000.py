@@ -109,10 +109,10 @@ class SP2000:
         return synonyms
 
     @staticmethod
-    def get_col_taiwan(query, tree, option='equal', include_synonyms=True):
+    def get_col_taiwan(*queries, tree='name', option='equal', include_synonyms=True):
         """Search Catalogue of Life Taiwan checklist
         Get Catalogue of Life Taiwan checklist via advanced query.
-        :param query: The string to search for.
+        :param queries: The string to search for. single or more query
         :param tree: Query by category tree, tree should in ("kingdom","phylum","class","order","family","genus","name"),the default value is "name".
         :param option: Query format, option should in ("contain","equal","beginning"),the default value is "equal".
         :param include_synonyms: Whether the results contain a synonym or not.
@@ -124,31 +124,74 @@ class SP2000:
         assert option in ['contain', 'equal', 'begging'],\
             'option should in ("contain","equal","beginning"),the default value is "equal".'
 
-        if include_synonyms:
-            url = 'http://taibnet.sinica.edu.tw/eng/taibnet_xml.php?R1={tree}&D1=&' \
-                  'D2={tree}&D3={option}&T1={query}+&T2=&id=y&sy=y'.format(tree=tree, option=option, query=query)
-            pass
+        col_taiwan_dict = {}
+
+        for query in queries:
+            col_taiwan_list = []
+
+            if include_synonyms:
+                url = 'http://taibnet.sinica.edu.tw/eng/taibnet_xml.php?R1={tree}&D1=&' \
+                      'D2={tree}&D3={option}&T1={query}+&T2=&id=y&sy=y'.format(tree=tree, option=option, query=query)
+            else:
+                url = 'http://taibnet.sinica.edu.tw/eng/taibnet_xml.php?R1={tree}&D1=&' \
+                      'D2={tree}&D3={option}&T1={query}+&T2=&id=y&sy='.format(tree=tree, option=option, query=query)
+            x = requests.get(url).text
+            tree = ElementTree.fromstring(x)
+
+            for i in tree:
+                if i.tag == 'record':
+                    col_dict = dict()
+                    for element in i:
+                        col_dict[element.tag] = element.text
+                    col_taiwan_list.append(col_dict)
+            print(col_taiwan_list)
+            col_taiwan_dict[query] = col_taiwan_list
+        return col_taiwan_dict
+
+    @staticmethod
+    def get_redlist_china(taxon='', query='', option='Scientific_Names'):
+        """Query Redlist of Chinese Biodiversity
+        Query Redlist of China’s Biodiversity of Vertebrate, Higher Plants and Macrofungi.
+        :param query: The string to query for.
+        :param option: There is one required parameter, which is either Chinese Names or Scientific Names.
+         Give eithera Chinese Names or Scientific Names. If an Scientific Names is given,
+         the Chinese Names parameter may not be used. Only exact matches found the name given will be returned.
+         option should in ("Chinese Names","Scientific Names").
+        :param taxon: There is one required parameter, taxon should in ("Amphibians","Angiospermae","Ascomycetes",
+        "Basidiomycetes","Birds","Bryophyta","Gymnospermae","Inland Fishes","Lichens","Mammals","Pteridophyta",
+        "Reptiles").
+        :return: pandas DataFrame
+        """
+
+        assert option in ['Chinese_Names','Scientific_Names'], \
+            'option should in ("Chinese_Names","Scientific_Names"),the default value is "Scientific_Names".'
+
+        assert taxon in ["Mammals", "Birds", "Reptiles", "Amphibians", "Inland Fishes", "Plants", "Fungi"],\
+            'taxon should in ("Mammals", "Birds", "Reptiles", "Amphibians", "Inland Fishes", "Plants", "Fungi")'
+
+        try:
+            excel = pd.read_excel(open('RedlistChina.xlsx', 'rb'))
+        except FileNotFoundError:
+            data = requests.get('https://files.ynulhcloud.cn/RedlistChina.xlsx').content
+            with open('RedlistChina.xlsx', 'wb') as f:
+                f.write(data)
+            excel = pd.read_excel(open('RedlistChina.xlsx', 'rb'))
+
+        if query and taxon:
+            if option == 'Chinese Names':
+                df = excel[(excel['Chinese Names'] == query) & (excel['Taxon'] == taxon)]
+            else:
+                df = excel[(excel['Scientific Names'] == query) & (excel['Taxon'] == taxon)]
+        elif query:
+            df = excel[excel['Chinese Names'] == query]
+        elif taxon:
+            df = excel[excel['Taxon'] == taxon]
         else:
-            url = 'http://taibnet.sinica.edu.tw/eng/taibnet_xml.php?R1={tree}&D1=&' \
-                  'D2={tree}&D3={option}&T1={query}+&T2=&id=y&sy='.format(tree=tree, option=option, query=query)
-        x = requests.get(url).text
-        tree = ElementTree.fromstring(x)
-        col_taiwan_list = []
-        for i in tree:
-            if i.tag == 'record':
-                col_dict = dict()
-                for element in i:
-                    col_dict[element.tag] = element.text
-                col_taiwan_list.append(col_dict)
-        return col_taiwan_list
+            df = None
+        return df
 
     @staticmethod
-    def get_redlist_china():
-        # todo
-        pass
-
-    @staticmethod
-    def get_col_global(query, option='name', response='terse', start=0):
+    def get_col_global(*queries, option='name', response='terse', start=0):
         """Search Catalogue of Life Global checklist
         Get Catalogue of Life Global checklist via species name and id.
         :param query: The string to search for.
@@ -169,43 +212,44 @@ class SP2000:
         """
         assert option in ['name', 'id'], 'option should in (name, id).'
         assert response in ['terse', 'full'], 'response should in (terse, full).'
+        result_dict = {}
 
-        if option == 'name':
-            query_no_space = re.sub(' ', '+', query)
-            result = json.loads(requests.get('http://webservice.catalogueoflife.org/col/webservice?name={}'
-                               '&format=json&response={}&start={}'.format(query_no_space, response, start)).text)\
-                .get('results', None)
-        else:
-            result = json.loads(requests.get('http://webservice.catalogueoflife.org/col/webservice?id={}'
-                               '&format=json&response={}&start={}'.format(query, response, start)).text)\
-                .get('results', None)
-        return result
+        for query in queries:
+
+            if option == 'name':
+                query_no_space = re.sub(' ', '+', query)
+                result = json.loads(requests.get('http://webservice.catalogueoflife.org/col/webservice?name={}'
+                                   '&format=json&response={}&start={}'.format(query_no_space, response, start)).text)\
+                    .get('results', None)
+            else:
+                result = json.loads(requests.get('http://webservice.catalogueoflife.org/col/webservice?id={}'
+                                   '&format=json&response={}&start={}'.format(query, response, start)).text)\
+                    .get('results', None)
+            result_dict[query] = result
+        return result_dict
 
 
 sp2000 = SP2000()
 
 
 if __name__ == '__main__':
-    api_key = 'You api key'
+    from pprint import pprint
+    api_key = 'Your Key'
 
     sp2000.set_search_key(api_key)
-    l = sp2000.search_family_id('Rosaceae', 'Cyprinidae')
-    print(l)
-
     print(sp2000.search_taxon_id('1233542354', stype='family_id'))
     print(sp2000.search_taxon_id('Uncia uncia', stype='scientific_name'))
     print(sp2000.search_taxon_id('Uncia uncia', 'Anguilla marmorata', stype='scientific_name'))
     print(sp2000.search_checklist('b8c6a086-3d28-4876-8e8a-ca96e667768d'))
-    d = sp2000.find_synonyms('Anguilla anguilla')
-    print(d)
-    print(sp2000.get_col_taiwan(query="Anguilla", tree="name", option="contain"))
+    print(sp2000.find_synonyms('Anguilla anguilla'))
+    print(sp2000.get_col_taiwan("Anguilla marmorata","Anguilla japonica","Anguilla bicolor","Anguilla nebulosa", "Anguilla luzonensis", tree="name", option="contain"))
     print(sp2000.search_taxon_id('bf72e220caf04592a68c025fc5c2bfb7', stype='family_id'))
 
     r = sp2000.get_col_taiwan(query="Anguilla",tree="name",option = "contain")
-    print(r)
-    print(len(r))
-
-    c = sp2000.search_checklist('b8c6a086-3d28-4876-8e8a-ca96e667768d')
-    print(sp2000.list_df(c))
-    
+    pprint(sp2000.search_checklist('b8c6a086-3d28-4876-8e8a-ca96e667768d'))
     print(sp2000.get_col_global(query="Platalea leucorodia", option="name"))
+    print(sp2000.get_col_taiwan("Anguilla", "Anguilla"))
+    print(sp2000.get_col_global("Anguilla marmorata","Anguilla japonica",
+    "Anguilla bicolor","Anguilla nebulosa","Anguilla luzonensis",option="name"))
+    print(sp2000.get_redlist_china(taxon='Inland Fishes'))
+
