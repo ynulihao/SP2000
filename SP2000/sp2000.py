@@ -166,8 +166,8 @@ class SP2000:
         assert option in ['Chinese_Names','Scientific_Names'], \
             'option should in ("Chinese_Names","Scientific_Names"),the default value is "Scientific_Names".'
 
-        assert taxon in ["Mammals", "Birds", "Reptiles", "Amphibians", "Inland Fishes", "Plants", "Fungi"],\
-            'taxon should in ("Mammals", "Birds", "Reptiles", "Amphibians", "Inland Fishes", "Plants", "Fungi")'
+        assert taxon in ["Mammals", "Birds", "Reptiles", "Amphibians", "Inland Fishes", "Plants", "Fungi", ""],\
+            'taxon should in ("Mammals", "Birds", "Reptiles", "Amphibians", "Inland Fishes", "Plants", "Fungi", "")'
 
         try:
             excel = pd.read_excel(open('RedlistChina.xlsx', 'rb'))
@@ -178,12 +178,12 @@ class SP2000:
             excel = pd.read_excel(open('RedlistChina.xlsx', 'rb'))
 
         if query and taxon:
-            if option == 'Chinese Names':
-                df = excel[(excel['Chinese Names'] == query) & (excel['Taxon'] == taxon)]
+            if option == 'Chinese_Names':
+                df = excel[(excel['Chinese_Names'] == query) & (excel['Taxon'] == taxon)]
             else:
-                df = excel[(excel['Scientific Names'] == query) & (excel['Taxon'] == taxon)]
+                df = excel[(excel['Scientific_Names'] == query) & (excel['Taxon'] == taxon)]
         elif query:
-            df = excel[excel['Chinese Names'] == query]
+            df = excel[excel['Chinese_Names'] == query]
         elif taxon:
             df = excel[excel['Taxon'] == taxon]
         else:
@@ -237,19 +237,19 @@ if __name__ == '__main__':
     api_key = 'Your Key'
 
     sp2000.set_search_key(api_key)
-    print(sp2000.search_taxon_id('1233542354', stype='family_id'))
-    print(sp2000.search_taxon_id('Uncia uncia', stype='scientific_name'))
-    print(sp2000.search_taxon_id('Uncia uncia', 'Anguilla marmorata', stype='scientific_name'))
-    print(sp2000.search_checklist('b8c6a086-3d28-4876-8e8a-ca96e667768d'))
-    print(sp2000.find_synonyms('Anguilla anguilla'))
-    print(sp2000.get_col_taiwan("Anguilla marmorata","Anguilla japonica","Anguilla bicolor","Anguilla nebulosa", "Anguilla luzonensis", tree="name", option="contain"))
-    print(sp2000.search_taxon_id('bf72e220caf04592a68c025fc5c2bfb7', stype='family_id'))
-
-    r = sp2000.get_col_taiwan(query="Anguilla",tree="name",option = "contain")
-    pprint(sp2000.search_checklist('b8c6a086-3d28-4876-8e8a-ca96e667768d'))
-    print(sp2000.get_col_global(query="Platalea leucorodia", option="name"))
-    print(sp2000.get_col_taiwan("Anguilla", "Anguilla"))
-    print(sp2000.get_col_global("Anguilla marmorata","Anguilla japonica",
-    "Anguilla bicolor","Anguilla nebulosa","Anguilla luzonensis",option="name"))
+    # print(sp2000.search_taxon_id('1233542354', stype='family_id'))
+    # print(sp2000.search_taxon_id('Uncia uncia', stype='scientific_name'))
+    # print(sp2000.search_taxon_id('Uncia uncia', 'Anguilla marmorata', stype='scientific_name'))
+    # print(sp2000.search_checklist('b8c6a086-3d28-4876-8e8a-ca96e667768d'))
+    # print(sp2000.find_synonyms('Anguilla anguilla'))
+    # print(sp2000.get_col_taiwan("Anguilla marmorata","Anguilla japonica","Anguilla bicolor","Anguilla nebulosa", "Anguilla luzonensis", tree="name", option="contain"))
+    # print(sp2000.search_taxon_id('bf72e220caf04592a68c025fc5c2bfb7', stype='family_id'))
+    #
+    # r = sp2000.get_col_taiwan(query="Anguilla",tree="name",option = "contain")
+    # pprint(sp2000.search_checklist('b8c6a086-3d28-4876-8e8a-ca96e667768d'))
+    # print(sp2000.get_col_global(query="Platalea leucorodia", option="name"))
+    # print(sp2000.get_col_taiwan("Anguilla", "Anguilla"))
+    # print(sp2000.get_col_global("Anguilla marmorata","Anguilla japonica",
+    # "Anguilla bicolor","Anguilla nebulosa","Anguilla luzonensis",option="name"))
     print(sp2000.get_redlist_china(taxon='Inland Fishes'))
 
