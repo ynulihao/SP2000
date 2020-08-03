@@ -23,7 +23,7 @@ class SP2000:
         data = json.loads(requests.get('http://www.sp2000.org.cn/api/v2/getFamiliesByFamilyName',
                                        params={'familyName': 'Cyprinidae', 'apiKey': self.key,
                                                'page': 1}).text)
-        assert data['code'] == '401', 'Please check your apiKey.'
+        assert data['code'] != '401', 'Please check your apiKey.'
 
     def search_family_id(self, *queries, start=1, limit=20):
         """Search family IDs
@@ -168,7 +168,7 @@ class SP2000:
         return synonyms
 
     @staticmethod
-    def get_col_taiwan(*queries, tree='name', option='equal', include_synonyms=True):
+    def get_col_taiwan(*queries, level='species', option='equal', include_synonyms=True):
         """Search Catalogue of Life Taiwan checklist
         Get Catalogue of Life Taiwan checklist via advanced query.
         :param queries: The string to search for. single or more query
@@ -178,8 +178,8 @@ class SP2000:
         :return:
         """
 
-        assert tree in ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'name'],\
-            'tree should in ("kingdom","phylum","class","order","family","genus","name")'
+        assert level in ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species'],\
+            'tree should in ("kingdom","phylum","class","order","family","genus","species")'
         assert option in ['contain', 'equal', 'begging'],\
             'option should in ("contain","equal","beginning"),the default value is "equal".'
 
@@ -190,10 +190,10 @@ class SP2000:
 
             if include_synonyms:
                 url = 'http://taibnet.sinica.edu.tw/eng/taibnet_xml.php?R1={tree}&D1=&' \
-                      'D2={tree}&D3={option}&T1={query}+&T2=&id=y&sy=y'.format(tree=tree, option=option, query=query)
+                      'D2={tree}&D3={option}&T1={query}+&T2=&id=y&sy=y'.format(tree=level, option=option, query=query)
             else:
                 url = 'http://taibnet.sinica.edu.tw/eng/taibnet_xml.php?R1={tree}&D1=&' \
-                      'D2={tree}&D3={option}&T1={query}+&T2=&id=y&sy='.format(tree=tree, option=option, query=query)
+                      'D2={tree}&D3={option}&T1={query}+&T2=&id=y&sy='.format(tree=level, option=option, query=query)
             x = requests.get(url).text
             tree = ElementTree.fromstring(x)
 
@@ -203,7 +203,6 @@ class SP2000:
                     for element in i:
                         col_dict[element.tag] = element.text
                     col_taiwan_list.append(col_dict)
-            print(col_taiwan_list)
             col_taiwan_dict[query] = col_taiwan_list
         return col_taiwan_dict
 
@@ -298,6 +297,16 @@ class SP2000:
 
 
 sp2000 = SP2000()
+set_search_key = sp2000.set_search_key
+search_family_id = sp2000.search_family_id
+search_taxon_id = sp2000.search_taxon_id
+search_checklist = sp2000.search_checklist
+list_df = sp2000.list_df
+find_synonyms = sp2000.find_synonyms
+get_col_taiwan = sp2000.get_col_taiwan
+get_redlist_china = sp2000.get_redlist_china
+get_col_global = sp2000.get_col_global
+
 
 
 if __name__ == '__main__':
@@ -305,6 +314,7 @@ if __name__ == '__main__':
     api_key = 'null'
 
     sp2000.set_search_key(api_key)
+
     # print(sp2000.search_taxon_id('1233542354', stype='family_id'))
     # print(sp2000.search_taxon_id('Uncia uncia', stype='scientific_name'))
     # print(sp2000.search_taxon_id('Uncia uncia', 'Anguilla marmorata', stype='scientific_name'))
@@ -321,6 +331,6 @@ if __name__ == '__main__':
     # "Anguilla bicolor","Anguilla nebulosa","Anguilla luzonensis",option="name"))
     # print(sp2000.search_taxon_id('Actinidia arg', name = 'scientific_name'))
     # print(sp2000.search_checklist('123', 'T20171000100267', '123124'))
-    print(sp2000.get_redlist_china(query= 'Anguilla', option = "Scientific Names", group='Inland Fishes'))
+    # print(sp2000.get_redlist_china(query= 'Anguilla', option = "Scientific Names", group='Inland Fishes'))
 
 
