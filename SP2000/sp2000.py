@@ -23,7 +23,7 @@ class SP2000:
         data = json.loads(requests.get('http://www.sp2000.org.cn/api/v2/getFamiliesByFamilyName',
                                        params={'familyName': 'Cyprinidae', 'apiKey': self.key,
                                                'page': 1}).text)
-        assert data['code'] != '401', 'Please check your apiKey.'
+        assert data['code'] != 401, 'Please check your apiKey.'
 
     def search_family_id(self, *queries, start=1, limit=20):
         """Search family IDs
