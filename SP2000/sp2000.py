@@ -51,7 +51,7 @@ class SP2000:
             fids[query] = fid_list
         return fids
 
-    def search_taxon_id(self, *queries, name='scientific_name', start = 1, limit = 20):
+    def search_taxon_id(self, *queries, name='scientificName', start = 1, limit = 20):
         """Search taxon IDs
         Search taxon IDs via familyID ,scientificName and commonName.
         :param queries: familyID ,scientificName or commonName. Single or more query.
@@ -64,10 +64,10 @@ class SP2000:
         :return:
         """
         assert self.key, ' You need to apply for the apiKey from http://sp2000.org.cn/api/document'
-        assert name in ['family_id', 'scientific_name', 'common_name'],\
-            'stype should in ("familyID","scientificName","commonName"),the default value is "scientificName".'
+        assert name in ['familyId', 'scientificName', 'commonName'],\
+            'name should in ("familyID","scientificName","commonName"),the default value is "scientificName".'
         taxon_id = {}
-        if name == 'family_id':
+        if name == 'familyId':
             for query in queries:
                 page_num = limit // 20
                 fid_list = []
@@ -82,7 +82,7 @@ class SP2000:
                         fid_list.append(entry['namecode'])
                 taxon_id[query] = fid_list
 
-        elif name == 'scientific_name':
+        elif name == 'scientificName':
             for query in queries:
                 page_num = limit // 20
                 fid_list = []
@@ -97,8 +97,7 @@ class SP2000:
                         fid_list.append(entry['accepted_name_info']['namecode'])
                 taxon_id[query] = fid_list
 
-
-        elif name == 'common_name':
+        elif name == 'commonName':
             for query in queries:
                 page_num = limit // 20
                 fid_list = []
@@ -172,14 +171,14 @@ class SP2000:
         """Search Catalogue of Life Taiwan checklist
         Get Catalogue of Life Taiwan checklist via advanced query.
         :param queries: The string to search for. single or more query
-        :param tree: Query by category tree, tree should in ("kingdom","phylum","class","order","family","genus","name"),the default value is "name".
+        :param level: Query by category tree, tree should in ("kingdom","phylum","class","order","family","genus","name"),the default value is "name".
         :param option: Query format, option should in ("contain","equal","beginning"),the default value is "equal".
         :param include_synonyms: Whether the results contain a synonym or not.
         :return:
         """
 
         assert level in ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species'],\
-            'tree should in ("kingdom","phylum","class","order","family","genus","species")'
+            'level should in ("kingdom","phylum","class","order","family","genus","species")'
         assert option in ['contain', 'equal', 'begging'],\
             'option should in ("contain","equal","beginning"),the default value is "equal".'
 
@@ -221,7 +220,7 @@ class SP2000:
         """
 
         assert option in ['Chinese Names','Scientific Names'], \
-            'option should in ("Chinese Names","Scientific Names"),the default value is "Scientific_Names".'
+            'option should in ("Chinese Names","Scientific Names"),the default value is "Scientific Names".'
 
         assert group in ["Amphibians","Birds","Inland Fishes","Mammals","Reptiles","Plants","Fungi", ""],\
             'taxon should in ("Amphibians","Birds","Inland Fishes","Mammals","Reptiles","Plants","Fungi", "")'
@@ -235,7 +234,7 @@ class SP2000:
             excel = pd.read_excel(open('RedlistChina.xlsx', 'rb'))
 
         if query and group:
-            if option == 'Chinese_Names':
+            if option == 'Chinese Names':
                 df = excel[excel['species_c'].notna()][excel[excel['species_c'].notna()]
                 ['species_c'].str.contains(query, regex=False)]
                 df = df[df['group'] == group]
@@ -331,6 +330,6 @@ if __name__ == '__main__':
     # "Anguilla bicolor","Anguilla nebulosa","Anguilla luzonensis",option="name"))
     # print(sp2000.search_taxon_id('Actinidia arg', name = 'scientific_name'))
     # print(sp2000.search_checklist('123', 'T20171000100267', '123124'))
-    # print(sp2000.get_redlist_china(query= 'Anguilla', option = "Scientific Names", group='Inland Fishes'))
+    # print(sp2000.get_redlist_china(query= 'Anguilla', option = "ScientificName", group='Inland Fishes'))
 
 
